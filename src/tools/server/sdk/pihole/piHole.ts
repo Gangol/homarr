@@ -12,42 +12,25 @@ export class PiHoleClient {
     this.baseHostName = trimStringEnding(hostname, ['/admin/index.php', '/admin', '/']);
   }
 
-    async getSummary() {
-      const authResponse = await fetch(`${this.baseHostName}/api/auth`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ password: this.apiToken }) 
-      });
+  async getSummary() {
+    const response = await fetch(
+      new URL(`${this.baseHostName}/admin/api.php?summaryRaw&auth=${this.apiToken}`)
+    );
 
-      if (!authResponse.ok) {
-          throw new Error(`Authentication failed: ${authResponse.status}`);
-      }
+    if (response.status !== 200) {
+      throw new Error(`Status code does not indicate success: ${response.status}`);
+    }
 
-      const authJson = await authResponse.json();
-      if (!authJson.session?.valid || !authJson.session.sid) {
-          throw new Error(`Invalid session response: ${JSON.stringify(authJson)}`);
-      }
+    const json = await response.json();
 
-      const sessionId = authJson.session.sid;
-
-      const response = await fetch(
-          new URL(`${this.baseHostName}/api.php?summaryRaw&auth=${sessionId}`)
+    if (Array.isArray(json)) {
+      throw new Error(
+        `Response does not indicate success. Authentication is most likely invalid: ${json}`
       );
+    }
 
-      if (response.status !== 200) {
-          throw new Error(`Failed to fetch summary: ${response.status}`);
-      }
-
-      const json = await response.json();
-
-      if (Array.isArray(json)) {
-          throw new Error(
-              `Response does not indicate success. Authentication might be invalid: ${json}`
-          );
-      }
-      return json as PiHoleApiSummaryResponse;
+    return json as PiHoleApiSummaryResponse;
   }
-
 
   async enable() {
     const response = await this.sendStatusChangeRequest('enable');
@@ -65,8 +48,8 @@ export class PiHoleClient {
   ): Promise<PiHoleApiStatusChangeResponse> {
     const response = await fetch(
       duration !== 0
-        ? `${this.baseHostName}/api?${action}=${duration}&auth=${this.apiToken}`
-        : `${this.baseHostName}/api?${action}&auth=${this.apiToken}`
+        ? `${this.baseHostName}/admin/api.php?${action}=${duration}&auth=${this.apiToken}`
+        : `${this.baseHostName}/admin/api.php?${action}&auth=${this.apiToken}`
     );
 
     if (response.status !== 200) {
