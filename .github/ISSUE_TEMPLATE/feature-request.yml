@@ -27,3 +27,11 @@ body:
         - High (App breaking feature)
     validations:
       required: true
+  - type: checkboxes
+    id: idiot-check
+    attributes:
+      label: Please tick the boxes
+      description: Before submitting, please ensure that
+      options:
+        - label: You are **NOT** using a version superior to v1. if that is the case, please fill this issue on the new repository. 
+          required: true
