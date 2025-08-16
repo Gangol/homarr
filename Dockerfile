@@ -13,7 +13,6 @@ COPY public ./public
 COPY package.json ./temp_package.json
 COPY yarn.lock ./temp_yarn.lock
 # Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY .next/standalone ./
 COPY .next/static ./.next/static
 COPY ./scripts/run.sh ./scripts/run.sh
