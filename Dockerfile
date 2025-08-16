@@ -4,7 +4,7 @@ WORKDIR /app
 
 # 1. Install dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # 2. Copy source & build
 COPY . .
@@ -20,7 +20,7 @@ COPY --from=builder /app/public ./public
 
 # Install only production deps
 COPY --from=builder /app/package*.json ./
-RUN npm ci --production
+RUN npm install --production
 
 EXPOSE 3000
 CMD ["npm", "start"]
