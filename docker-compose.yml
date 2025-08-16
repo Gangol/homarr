@@ -1,0 +1,20 @@
+version: '3'
+services:
+  homarr:
+    container_name: homarr
+    image: homarr-custom
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./homarr/configs:/app/data/configs
+      - ./homarr/icons:/app/public/icons
+      - ./homarr/data:/data
+    ports:
+      - '7575:7575'
+    environment:
+      - TZ=America/New_York
+      - DEFAULT_COLOR_SCHEME=dark
+      #- SECRET_ENCRYPTION_KEY=your-secure-key-here
