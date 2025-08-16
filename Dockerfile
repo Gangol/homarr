@@ -9,8 +9,7 @@ ENV NODE_OPTIONS '--no-experimental-fetch'
 
 COPY next.config.js ./
 COPY public ./public
-COPY package.json ./temp_package.json
-COPY yarn.lock ./temp_yarn.lock
+COPY package.json yarn.lock ./
 COPY src ./src
 COPY scripts ./scripts
 COPY drizzle ./drizzle
@@ -19,11 +18,10 @@ COPY tsconfig.json ./tsconfig.json
 
 RUN mkdir /data
 
-# Install dependencies
+# Install dependencies and build
 RUN apt update && apt install -y openssl wget
+RUN npm install -g yarn
 RUN yarn install
-
-# Build the Next.js app
 RUN yarn build
 
 COPY .next/standalone ./
@@ -34,7 +32,7 @@ RUN chmod +x ./scripts/run.sh
 COPY ./drizzle/migrate ./migrate
 COPY ./tsconfig.json ./migrate/tsconfig.json
 
-# Move node_modules to temp location to avoid overwriting
+# Migration setup
 RUN mv node_modules _node_modules
 RUN rm package.json
 RUN cp ./migrate/package.json ./package.json
