@@ -1,26 +1,32 @@
-# Stage 1: build the Next.js app
+####################################
+# Stage 1: Build with pnpm
+####################################
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# 1. Install dependencies
-COPY package*.json ./
-RUN npm install
+# 1) Enable and pin pnpm
+RUN corepack enable \
+  && corepack prepare pnpm@latest --activate
 
-# 2. Copy source & build
+# 2) Copy only lockfiles + manifest to cache deps
+COPY package.json pnpm-lock.yaml workspace.json ./
+
+# 3) Install all workspaces deps
+RUN pnpm install --frozen-lockfile
+
+# 4) Copy source code & build your app
 COPY . .
-RUN npm run build
+RUN pnpm run build
 
-# Stage 2: produce a lean production image
-FROM node:18-alpine AS runner
-WORKDIR /app
+####################################
+# Stage 2: Serve the built app
+####################################
+FROM nginx:alpine AS runner
+WORKDIR /usr/share/nginx/html
 
-# Copy build artifacts
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
+# Copy static build output from the builder
+# (Adjust the path if Homarr’s build folder is different)
+COPY --from=builder /app/apps/homarr/build ./
 
-# Install only production deps
-COPY --from=builder /app/package*.json ./
-RUN npm install --production
-
-EXPOSE 3000
-CMD ["npm", "start"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
