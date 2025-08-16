@@ -9,7 +9,7 @@ RUN corepack enable \
   && corepack prepare pnpm@latest --activate
 
 # 2) Copy only lockfiles + manifest to cache deps
-COPY package.json pnpm-lock.yaml workspace.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # 3) Install all workspaces deps
 RUN pnpm install --frozen-lockfile
@@ -25,7 +25,6 @@ FROM nginx:alpine AS runner
 WORKDIR /usr/share/nginx/html
 
 # Copy static build output from the builder
-# (Adjust the path if Homarr’s build folder is different)
 COPY --from=builder /app/apps/homarr/build ./
 
 EXPOSE 80
