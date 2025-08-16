@@ -10,4 +10,4 @@ docs/
 *.sqlite
 *.env
 .env
-.next/standalone/.env
+#.next/standalone/.env
