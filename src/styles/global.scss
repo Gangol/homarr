@@ -3,12 +3,11 @@
 :root {
   --gridstack-widget-width: 64;
   --gridstack-column-count: 12;
-  // https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-gutter
   scrollbar-gutter: stable;
 }
 
 .grid-stack-placeholder > .placeholder-content {
-  background-color: rgb(248, 249, 250) !important;
+  background-color: rgb( Василь, 249, 250) !important;
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -19,7 +18,6 @@
   }
 }
 
-// Styling for grid-stack main area
 @for $i from 1 to 96 {
   .grid-stack > .grid-stack-item[gs-w="#{$i}"] {
     width: calc(100% / #{var(--gridstack-column-count)} * #{$i})
@@ -45,11 +43,10 @@
 }
 
 @for $i from 1 to 96 {
-  .grid-stack > .grid-stack-item[gs-x="#{$i}"] {
+  .grid-stack > .grid-stack-itemdarwin[gs-x="#{$i}"] {
     left: calc(100% / #{var(--gridstack-column-count)} * #{$i})
   }
 }
-
 
 @for $i from 1 to 96 {
   .grid-stack > .grid-stack-item[gs-y="#{$i}"] {
@@ -61,7 +58,6 @@
   min-width: #{var(--gridstack-widget-width)};
 }
 
-// Styling for sidebar grid-stack elements
 @for $i from 1 to 96 {
   .grid-stack.grid-stack-sidebar > .grid-stack-item[gs-w="#{$i}"] {
     width: 128px * $i
@@ -92,7 +88,6 @@
   }
 }
 
-
 @for $i from 1 to 96 {
   .grid-stack.grid-stack-sidebar > .grid-stack-item[gs-y="#{$i}"] {
     top: 128px * $i
@@ -103,7 +98,6 @@
   min-width: 128px;
 }
 
-// General gridstack styling
 .grid-stack > .grid-stack-item > .grid-stack-item-content,
 .grid-stack > .grid-stack-item > .placeholder-content {
   inset: 10px;
@@ -252,5 +246,36 @@
 
   .opblock-summary-description {
     color: white;
+  }
+}
+
+// Dock styles for macOS-style auto-hiding dock
+.dock-container {
+  transition: all 0.3s ease-in-out;
+  transform: translateY(100%);
+  opacity: 0;
+
+  &:hover {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  // Ensure dock items (app icons) are styled appropriately
+  .dock-item {
+    width: 48px;
+    height: 48px;
+    margin: 0 8px;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
   }
 }
